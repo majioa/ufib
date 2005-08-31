@@ -1,0 +1,8 @@
+# binary
+*.bin
+*.hex
+
+# support
+*.map
+*.lst
+*.o
