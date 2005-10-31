@@ -2,34 +2,35 @@
 SRC=ufib.asm
 OBJ=$(SRC:.asm=.o) # replaces the .asm from SRC with .o
 BIN=ufib.bin
+HEX=$(BIN:.bin=.hex)
+#SRCDIR=../src/
+#OBJDIR=../obj/
+#BINDIR=../bin/
 
-AS=cfasm
-CC=cfcc
-LINK=cflink
-BINC=binc
-AFLAGS=-l -o $<
+AS=cfasm.exe
+CC=cfcc.exe
+LINK=cflink.exe
+BINC=binc.exe
+AFLAGS=-l
 CFLAGS=
-LFLAGS=-m -b -r0 -o $@
-#AFLAGS=-li $(SRC:.asm=.lst) -o $@ -g $< -proc $(PROC)
-#CFLAGS=-L .  -proc $(PROC) -o $@ -g $<
-#LFLAGS=-Map $(EXE:.dxe=.map) -L. -S -s -o $@ -T $(LDF)
+LFLAGS=-m
 RM=rm
 
 # combined w/ next line will compile recently changed .asm files
 %.o: %.asm
-	$(AS) $(AFLAGS) > $(SRC:.asm=.lst)
+	$(AS) $(AFLAGS) $(SRCDIR)$<  -o > $(OBJDIR)$(<:.asm=.lst)
 
-%.o: %.c
-	$(CC) $(CFLAGS)
+$(HEX): $(OBJ)
+	$(LINK) $(LFLAGS) -s0 -o $(BINDIR)$@ $(OBJ) >$(BINDIR)$(HEX:.hex=.map)
 
-$(BIN): $(OBJ) # $(EXE) is dependent on all of the files in $(OBJ) and $(LDF) to exist
-	$(LINK) $(LFLAGS) $(OBJ) >$(BIN:.bin=.map)
+$(BIN): $(SRC) # $(BIN) is dependent on all of the files in $(OBJ) to exist
+	$(AS) $(SRCDIR)$<  -b
+
 
 .PHONY : all	 # .PHONY ignores files named all
-
-all: $(BIN)	 # all is dependent on $(BIN) to be complete
+all: $(HEX) $(BIN)	 # all is dependent on $(BIN) and $(HEX)) to be complete
 
 .PHONY : clean	 # .PHONY ignores files named clean
 clean:
-	-$(RM) $(OBJ) core    # '-' causes errors not to exit the process
+	-$(RM) $(OBJ) *.*~ core    # '-' causes errors not to exit the process
 

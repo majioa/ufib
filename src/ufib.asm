@@ -555,6 +555,30 @@ start:
 
 	; Начальная установка MMU
 	jsr	_mcf_mmu_init
+;*******************************************************************************
+;PAR_PSC0	equ	$A4F
+	; конфигурация порта PSC0_TXD0 как ВВОН (GPIO)
+;	bset	#PAR_TXD0, (PAR_PSC0,a0)
+	; конфигурация порта EPDD5 как ВВОН (GPIO)
+IRQ5	equ	5
+IRQ6	equ	6
+IRQ7	equ	7
+IRQ4	equ	4
+	bset	#IRQ7, (EPDDR,a0)
+	bset	#IRQ6, (EPDDR,a0)
+	bset	#IRQ5, (EPDDR,a0)
+	bset	#IRQ4, (EPDDR,a0)
+	; вывод порта EPDD5
+	bclr	#IRQ5, (EPDR,a0)
+	bset	#IRQ6, (EPDR,a0)
+loop5:
+	bset	#IRQ7, (EPDR,a0)
+	bset	#IRQ4, (EPDR,a0)
+	bclr	#IRQ7, (EPDR,a0)
+	bclr	#IRQ4, (EPDR,a0)
+	bra	loop5
+;*******************************************************************************
+
 
 
 	move.l	d1, d3
