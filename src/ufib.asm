@@ -12,6 +12,11 @@ __SDRAM_SIZE	equ	$00800000	//8M
 __EXT_SRAM	equ	$FE400000
 __EXT_SRAM_SIZE equ	131073		//128K
 
+; sram variables addresses definition
+SRAM0_SIZE	equ	$0
+USB_DESC_LEN	equ	$00
+USB_ADDR	equ	$00
+
 ;sections sizes and addresses definition
 __HEAP_START	equ	$0
 __HEAP_SIZE	equ	$40000
@@ -21,61 +26,23 @@ __SP_INIT	equ	__SP_START+__SP_SIZE
 
 
 ;****************************UFIB on MCF5485*****************
-WORD_SIZE	equ	2
-//PIXEL_IGNORE	equ	55?
-PIXEL_COUNT	equ	2
-PIXEL_SIZE	equ	WORD_SIZE
-ROW_IGNORE	equ	3
-ROW_COUNT	equ	298
-ROW_SIZE	equ	PIXEL_COUNT*PIXEL_SIZE
-CAM_COUNT	equ	4
-CAM_SIZE	equ	ROW_COUNT*ROW_SIZE
-FRAME_SIZE	equ	CAM_COUNT*CAM_SIZE
+	; Simple extended code test for cfasm
 
-
-USB_FRAME_SIZE	equ	512
-
-INTL_FRAME	equ	INTL_EP1
-INTL_ROW	equ	INTL_EP2
-INTL_BUTTON	equ	INTL_EP7
-IRQ_FRAME	equ	IRQ_EP1
-IRQ_ROW		equ	IRQ_EP2
-IRQ_BUTTON	equ	IRQ_EP7
-
-
-MODE_ALTER_BUFFER	equ	0
-BUFFER_ALTERED		equ	0
-
-; sram variables addresses definition
-	section bss,4,D
-
-	long	sram0_size
-;	long	cam_addr
-	long	mode
-;	long
-;	long
-;	long
-;	long	frame_pointers
-	long	status
-	long	cam0
-	long	cam1
-	long	cam2
-	long	cam3
-	long	main_bank
-	long	alter_bank
-;	long	frame_size
-	long	free_buffer
-
-
-	section data,4,D
-usb_desc_len	dc.b	0
-usb_addr	dc.b	0
-data_channels	dc.l	INTH_GPT0|INTH_GPT1|INTH_GPT2|INTH_GPT3
+CAM0	equ	$100
+CAM1	equ	$104
+CAM2	equ	$108
+CAM3	equ	$10c
+SYS_SIZE	equ	4
+FRM_SIZE	equ	$10
+CAM_SIZE	equ	300*4
+FRM0	equ	SYS_SIZE
+FRM1	equ	SYS_SIZE+FRM_SIZE
 
 
 	section code,16,C
 
 _VECTOR_TABLE:
+;	 org 0
 	dc.l __SP_INIT		      ;Initial SP
 	dc.l start		      ;Initial PC
 vector002 dc.l asm_exception_handler  ;Access Error
@@ -141,69 +108,69 @@ vector061 dc.l asm_exception_handler  ;Reserved
 vector062 dc.l asm_exception_handler  ;Reserved
 vector063 dc.l asm_exception_handler  ;Reserved
 vector064 dc.l asm_exception_handler
-vector065 dc.l exception_handler_irq1
-vector066 dc.l exception_handler_irq2
-vector067 dc.l asm_exception_handler
-vector068 dc.l asm_exception_handler
-vector069 dc.l asm_exception_handler
-vector070 dc.l asm_exception_handler
-vector071 dc.l exception_handler_irq7
-vector072 dc.l asm_exception_handler
-vector073 dc.l asm_exception_handler
-vector074 dc.l asm_exception_handler
-vector075 dc.l asm_exception_handler
-vector076 dc.l asm_exception_handler
-vector077 dc.l asm_exception_handler
-vector078 dc.l asm_exception_handler
-vector079 dc.l exception_handler_usb_ep0
-vector080 dc.l asm_exception_handler
-vector081 dc.l asm_exception_handler
-vector082 dc.l asm_exception_handler
-vector083 dc.l asm_exception_handler
-vector084 dc.l asm_exception_handler
-vector085 dc.l asm_exception_handler
-vector086 dc.l exception_handler_usb_general
-vector087 dc.l exception_handler_usb_core
-vector088 dc.l exception_handler_usb_all
-vector089 dc.l asm_exception_handler
-vector090 dc.l asm_exception_handler
-vector091 dc.l asm_exception_handler
-vector092 dc.l asm_exception_handler
-vector093 dc.l asm_exception_handler
-vector094 dc.l asm_exception_handler
-vector095 dc.l asm_exception_handler
-vector096 dc.l asm_exception_handler
-vector097 dc.l asm_exception_handler
-vector098 dc.l asm_exception_handler
-vector099 dc.l asm_exception_handler
-vector100 dc.l asm_exception_handler
-vector101 dc.l asm_exception_handler
-vector102 dc.l asm_exception_handler
-vector103 dc.l asm_exception_handler
-vector104 dc.l asm_exception_handler
-vector105 dc.l asm_exception_handler
-vector106 dc.l asm_exception_handler
-vector107 dc.l asm_exception_handler
-vector108 dc.l asm_exception_handler
-vector109 dc.l asm_exception_handler
-vector110 dc.l asm_exception_handler
-vector111 dc.l asm_exception_handler
-vector112 dc.l asm_exception_handler
-vector113 dc.l asm_exception_handler
-vector114 dc.l asm_exception_handler
-vector115 dc.l asm_exception_handler
-vector116 dc.l asm_exception_handler
-vector117 dc.l exception_handler_slt1
-vector118 dc.l exception_handler_slt0
-vector119 dc.l asm_exception_handler
-vector120 dc.l asm_exception_handler
-vector121 dc.l asm_exception_handler
-vector122 dc.l asm_exception_handler
-vector123 dc.l exception_handler_gpt3
-vector124 dc.l exception_handler_gpt2
-vector125 dc.l exception_handler_gpt1
-vector126 dc.l exception_handler_gpt0
-vector127 dc.l asm_exception_handler
+vector065 dc.l exception_handler_src1
+vector066 dc.l exception_handler_src2
+vector067 dc.l exception_handler_src3
+vector068 dc.l exception_handler_src4
+vector069 dc.l exception_handler_src5
+vector070 dc.l exception_handler_src6
+vector071 dc.l exception_handler_src7
+vector072 dc.l exception_handler_src8
+vector073 dc.l exception_handler_src9
+vector074 dc.l exception_handler_src10
+vector075 dc.l exception_handler_src11
+vector076 dc.l exception_handler_src12
+vector077 dc.l exception_handler_src13
+vector078 dc.l exception_handler_src14
+vector079 dc.l exception_handler_src15
+vector080 dc.l exception_handler_src16
+vector081 dc.l exception_handler_src17
+vector082 dc.l exception_handler_src18
+vector083 dc.l exception_handler_src19
+vector084 dc.l exception_handler_src20
+vector085 dc.l exception_handler_src21
+vector086 dc.l exception_handler_src22
+vector087 dc.l exception_handler_src23
+vector088 dc.l exception_handler_src24
+vector089 dc.l exception_handler_src25
+vector090 dc.l exception_handler_src26
+vector091 dc.l exception_handler_src27
+vector092 dc.l exception_handler_src28
+vector093 dc.l exception_handler_src29
+vector094 dc.l exception_handler_src30
+vector095 dc.l exception_handler_src31
+vector096 dc.l exception_handler_src32
+vector097 dc.l exception_handler_src33
+vector098 dc.l exception_handler_src34
+vector099 dc.l exception_handler_src35
+vector100 dc.l exception_handler_src36
+vector101 dc.l exception_handler_src37
+vector102 dc.l exception_handler_src38
+vector103 dc.l exception_handler_src39
+vector104 dc.l exception_handler_src40
+vector105 dc.l exception_handler_src41
+vector106 dc.l exception_handler_src42
+vector107 dc.l exception_handler_src43
+vector108 dc.l exception_handler_src44
+vector109 dc.l exception_handler_src45
+vector110 dc.l exception_handler_src46
+vector111 dc.l exception_handler_src47
+vector112 dc.l exception_handler_src48
+vector113 dc.l exception_handler_src49
+vector114 dc.l exception_handler_src50
+vector115 dc.l exception_handler_src51
+vector116 dc.l exception_handler_src52
+vector117 dc.l exception_handler_src53
+vector118 dc.l exception_handler_src54
+vector119 dc.l exception_handler_src55
+vector120 dc.l exception_handler_src56
+vector121 dc.l exception_handler_src57
+vector122 dc.l exception_handler_src58
+vector123 dc.l exception_handler_src59
+vector124 dc.l exception_handler_src60
+vector125 dc.l exception_handler_src61
+vector126 dc.l exception_handler_src62
+vector127 dc.l exception_handler_src63
 vector128 dc.l asm_exception_handler
 vector129 dc.l asm_exception_handler
 vector130 dc.l asm_exception_handler
@@ -333,218 +300,13 @@ vector253 dc.l asm_exception_handler
 vector254 dc.l asm_exception_handler
 vector255 dc.l asm_exception_handler
 
-;*******************************************************************************
-; Обработка запросов прерываний сигнала кадра		    		       *
-;*******************************************************************************
-;d0 - разрушен
-;a0 - указатель на устройства
-;a1 - указатель на область памяти
-;a3-a6 - указатели на области памяти данных полученных от камер
-exception_handler_irq1:
-	; очистка запрса прерывания сигнала кадра
-	bclr.b	#INTL_FRAME%8, (IPRL+INTL_FRAME/8,a0)
-	; проверка сигнала активности кадра (0 = активный)
-	btst.b	#IRQ_FRAME%8, (EPPDR+IRQ_FRAME/8,a0)
-	beq.b	.frame_enable_row
-	; отключение прерываний строки
-	bset.b	#INTL_ROW%8, (IMRL+INTL_ROW/8,a0)
-	; смена активного буфера путём инвертирования бита режима
-	btst.b	#MODE_ALTER_BUFFER, (mode,a1)
-	bne.b	.save_alternate_buffers
-	move.l	(main_bank,a1), a3
-	bset.b	#BUFFER_ALTERED, (status,a1)
-	bra.b	.exit
-.save_alternate_buffers:
-	move.l	(alter_bank,a1), a3
-	bclr.b	#BUFFER_ALTERED, (status,a1)
-.exit:
-	lea.l	(CAM_SIZE,a3), a4
-	lea.l	(CAM_SIZE,a4), a5
-	lea.l	(CAM_SIZE,a5), a6
-	rte
-.frame_enable_row:
-	; очистка запроса от irq2 и разрешение прерываний от этого источника
-	bclr.b	#INTL_ROW%8, (IPRL+INTL_ROW/8,a0)
-	bclr.b	#INTL_ROW%8, (IMRL+INTL_ROW/8,a0)
-	rte
-;*******************************************************************************
-; Обработка запросов прерываний сигнала строки				       *
-;*******************************************************************************
-;d0 - разрушен
-;a0 - указатель на устройства
-exception_handler_irq2:
-	; очистка запрса прерывания сигнала строки
-	bclr.b	#IRQ_ROW%8, (EPFR+IRQ_ROW/8,a0)
-	; сброс настройки режима срабатывыания таймеров
-	move.l	#~GMS_ICT_MASK, d0
-	and.l	d0, (GMS3,a0)
-	and.l	d0, (GMS2,a0)
-	and.l	d0, (GMS1,a0)
-	and.l	d0, (GMS0,a0)
-	; проверка сигнала активности строки (0 = активный)
-	btst.b	#IRQ_ROW%8, (EPPDR+IRQ_ROW/8,a0)
-	beq.b	.enable_slt0
-	; загрузка доступных камер
-	move.l	(data_channels), d0
-	; отключение таймеров общего назначения
-	or.l	d0, (IMRH,a0)
-	rte
-.enable_slt0:
-	; запуск slt0
-	bset.b	#SCR_RUN, (SCR0,a0)
-	; разрешение прерываний от slt0
-	bclr.b	#INTH_SLT0%8, (IMRH+INTH_SLT0/8,a0)
-	; настройка прерываний от таймеров по фронту
-	move.l	#GMS_ICT_RAISE, d0
-	or.l	d0, (GMS3,a0)
-	or.l	d0, (GMS2,a0)
-	or.l	d0, (GMS1,a0)
-	or.l	d0, (GMS0,a0)
-	; установ индекса камер
-	move.l	#(WORD_SIZE<<1|WORD_SIZE<<9|WORD_SIZE<<17|WORD_SIZE<<25), d0
-	move.l	d0, (cam0,a1)
-	rte
-;*******************************************************************************
-; Обработка запросов прерываний сигнала кнопки		    		       *
-;*******************************************************************************
-;a0 - указатель на устройства
-exception_handler_irq7:
-	; разрешение приёма прерываний кнопки
-	bclr.b	#INTL_FRAME%8, (IPRL+INTL_FRAME/8,a0)
-	bclr.b	#INTL_FRAME%8, (IMRL+INTL_FRAME/8,a0)
-	wddata	$a5
+;************************************************************
+; ;This routine is the lowest-level exception handler	    *
+;************************************************************
+
 asm_exception_handler:
-	rte
-;*******************************************************************************
-; Обработка запросов прерываний данных камеры 4		    		       *
-;*******************************************************************************
-;d0 - разрушен
-;a0 - указатель на устройства
-;a6 - указатель на область памяти данных от камеры 4
-exception_handler_gpt3:
-	; если камера выключена выходим
-	clr.b	d0
-	cmp.b	(cam3,a1), d0
-	beq.b	.exit
-	; считывание значения счётчика таймера 3 и сохранение его в память 
-	move.w	(GSR3,a0), d0
-	move.w	d0, (a6)+
-	; декремент индекса камеры 3
-	subq.l	#WORD_SIZE, (cam3,a1)
-	; настройка прерываний от таймера 3 по спаду
-	move.l	(GMS3,a0), d0
-	and.l	#~GMS_ICT_MASK, d0
-	or.l	#GMS_ICT_FALL, d0
-	move.l	d0, (GMS3,a0)
-.exit:
-	; очистка ожидания запроса на прерывание от таймера 3
-	bclr.b	#INTH_GPT3%8, (IPRH+INTH_GPT3/8,a0)
-	; очистка бита срабатывания таймера 3
-	bset.b	#GSR_CAPT%8, (GSR3+GSR_CAPT/8,a0)
-	rte
-;*******************************************************************************
-; Обработка запросов прерываний данных камеры 3		    		       *
-;*******************************************************************************
-;d0 - разрушен
-;a0 - указатель на устройства
-;a5 - указатель на область памяти данных от камеры 3
-exception_handler_gpt2:
-	clr.b	d0
-	cmp.b	(cam2,a1), d0
-	beq.b	.exit
-	; считывание значения счётчика таймера 2 и сохранение его в память 
-	move.w	(GSR2,a0), d0
-	move.w	d0, (a5)+
-	; декремент индекса камеры 2
-	subq.l	#WORD_SIZE, (cam2,a1)
-	; настройка прерываний от таймера 2 по спаду
-	move.l	(GMS2,a0), d0
-	and.l	#~GMS_ICT_MASK, d0
-	or.l	#GMS_ICT_FALL, d0
-	move.l	d0, (GMS2,a0)
-.exit:
-	; очистка ожидания запроса на прерывание от таймера 2
-	bclr.b	#INTH_GPT2%8, (IPRH+INTH_GPT2/8,a0)
-	; очистка бита срабатывания таймера 2
-	bset.b	#GSR_CAPT%8, (GSR2+GSR_CAPT/8,a0)
-	rte
-;*******************************************************************************
-; Обработка запросов прерываний данных камеры 2		    		       *
-;*******************************************************************************
-;d0 - разрушен
-;a0 - указатель на устройства
-;a4 - указатель на область памяти данных от камеры 2
-exception_handler_gpt1:
-	clr.b	d0
-	cmp.b	(cam1,a1), d0
-	beq.b	.exit
-	; считывание значения счётчика таймера 1 и сохранение его в память 
-	move.w	(GSR1,a0), d0
-	move.w	d0, (a4)+
-	; декремент индекса камеры 1
-	subq.l	#WORD_SIZE, (cam1,a1)
-	; настройка прерываний от таймера 1 по спаду
-	move.l	(GMS1,a0), d0
-	and.l	#~GMS_ICT_MASK, d0
-	or.l	#GMS_ICT_FALL, d0
-	move.l	d0, (GMS1,a0)
-.exit:
-	; очистка ожидания запроса на прерывание от таймера 1
-	bclr.b	#INTH_GPT1%8, (IPRH+INTH_GPT1/8,a0)
-	; очистка бита срабатывания таймера 1
-	bset.b	#GSR_CAPT%8, (GSR1+GSR_CAPT/8,a0)
-	rte
-;*******************************************************************************
-; Обработка запросов прерываний данных камеры 1		    		       *
-;*******************************************************************************
-;d0 - разрушен
-;a0 - указатель на устройства
-;a3 - указатель на область памяти данных от камеры 1
-exception_handler_gpt0:
-	clr.b	d0
-	cmp.b	(cam0,a1), d0
-	beq.b	.exit
-	; считывание значения счётчика таймера 0 и сохранение его в память 
-	move.w	(GSR0,a0), d0
-	move.w	d0, (a3)+
-	; декремент индекса камеры 0
-	subq.l	#WORD_SIZE, (cam0,a1)
-	; настройка прерываний от таймера 0 по спаду
-	move.l	(GMS0,a0), d0
-	and.l	#~GMS_ICT_MASK, d0
-	or.l	#GMS_ICT_FALL, d0
-	move.l	d0, (GMS0,a0)
-.exit:
-	; очистка ожидания запроса на прерывание от таймера 0
-	bclr.b	#INTH_GPT0%8, (IPRH+INTH_GPT0/8,a0)
-	; очистка бита срабатывания таймера 0
-	bset.b	#GSR_CAPT%8, (GSR0+GSR_CAPT/8,a0)
-	rte
-;*******************************************************************************
-; Обработка запросов прерываний быстрого счётчикаы	    		       *
-;*******************************************************************************
-;d0 - разрушены
-;a0 - указатель на устройства
-exception_handler_slt0:
-	; очистка запрса прерывания сигнала строки
-	bset.b	#SSR_ST, (SSR0,a0)
-	; разрешение и очистка запрса прерывания сигналов данных
-	move.l	(data_channels), d0
-	move.l	d0, (IPRH,a0)
-	not.l	d0
-	and.l	d0, (IMRH,a0)
-	rte
 
-exception_handler_slt1:
-exception_handler_usb_ep0:
-exception_handler_usb_general:
-exception_handler_usb_core:
-exception_handler_usb_all:
 	rte
-
-;*******************************************************************************
-;*******************************************************************************
-;*******************************************************************************
 	;вх
 	;d0 - настройки процессора
 	;d1 - настройки паняти
@@ -555,30 +317,6 @@ start:
 
 	; Начальная установка MMU
 	jsr	_mcf_mmu_init
-;*******************************************************************************
-;PAR_PSC0	equ	$A4F
-	; конфигурация порта PSC0_TXD0 как ВВОН (GPIO)
-;	bset	#PAR_TXD0, (PAR_PSC0,a0)
-	; конфигурация порта EPDD5 как ВВОН (GPIO)
-IRQ5	equ	5
-IRQ6	equ	6
-IRQ7	equ	7
-IRQ4	equ	4
-	bset	#IRQ7, (EPDDR,a0)
-	bset	#IRQ6, (EPDDR,a0)
-	bset	#IRQ5, (EPDDR,a0)
-	bset	#IRQ4, (EPDDR,a0)
-	; вывод порта EPDD5
-	bclr	#IRQ5, (EPDR,a0)
-	bset	#IRQ6, (EPDR,a0)
-loop5:
-	bset	#IRQ7, (EPDR,a0)
-	bset	#IRQ4, (EPDR,a0)
-	bclr	#IRQ7, (EPDR,a0)
-	bclr	#IRQ4, (EPDR,a0)
-	bra	loop5
-;*******************************************************************************
-
 
 
 	move.l	d1, d3
@@ -595,7 +333,7 @@ loop5:
 	lsl.l	d3, d2
 	; Сброс данных СОЗУ0
 	jsr	_mcf_ram_init
-	move.l	d2, (sram0_size,a2)
+	move.l	d2, (SRAM0_SIZE,a2)
 
 _mcf_ram1_check:
 	move.l	d1, d3
@@ -647,7 +385,7 @@ _mcf_cache_check:
 
 	; Установка указателя на стек!
 	move.l	#__SRAM0-4, d0
-	add.l	(sram0_size,a2), d0
+	add.l	(SRAM0_SIZE,a2), d0
 	move.l	d0, sp
 
 	jsr	_mcf_gpio_init
@@ -655,14 +393,13 @@ _mcf_cache_check:
 	jsr	_mcf_timer_init
 	jsr	_mcf_fb_init
 	jsr	_mcf_edge_init
-;;	jsr	_mcf_fpu_init
+	jsr	_mcf_usb_init
 	jsr	_mcf_siu_ints_init
-	add.l	#$8000, a1
-;;	jsr	_mcf_usb_init
 
 	;FPU
 	clr.l	d2
 	fmove.l d2, fpcr
+
 
 	jsr	_main
 	nop
@@ -672,7 +409,39 @@ loop:
 	nop
 	nop
 	bra	loop
+
 	halt
+
+
+;*******************************************************************************
+;* This routines changes the IPL to the value passed into the routine.	       *
+;* It also returns the old IPL value back.				       *
+;*******************************************************************************
+_asm_set_ipl:
+	;(sp) == 7 is disables interrupts
+	;d0 = ipl
+	link	a6, #-8 	;sp = sp - 8
+	movem.l d6-d7, (sp)
+
+	move.w	sr, d7		;сохранение sr
+
+	move.l	d7, d1		;prepare return value
+	andi.l	#$0700, d1	;mask out IPL
+	lsr.l	#8, d1		;IPL
+
+;	move.l	8(A6),D6	;get argument
+	andi.l	#$07, d0	;least significant three bits
+	lsl.l	#8,d0		;move over to make mask
+
+	andi.l	#$0000F8FF, d7	;zero out current IPL
+	or.l	d0,d7		;place new IPL in sr
+	move.w	d7, sr
+
+	movem.l (SP),D6-D7
+	lea	8(SP),SP
+	unlk	A6
+	move.l	d1, d0
+	rts
 
 ;*******************************************************************************
 ;*******************************************************************************
@@ -710,7 +479,7 @@ _mcf_ram_init:
 	rts
 
 ;******************************************************************************
-;*  SIM - Debug 						      *
+;*  SIM - Debug 							      *
 ;******************************************************************************
 _mcf_siu_debug_init:
 	; вх:
@@ -758,13 +527,13 @@ _mcf_siu_ints_init:
 ;*  Настройка контроллера таймеров общего назначения			       *
 ;*******************************************************************************
 _mcf_timer_init:
-	move.l	#GMS_ICT_RAISE|GMS_SC|GMS_IEN|GMS_TMS_DIS, d0
+	move.l	#GPT_GMS_ICT_RAISE|GPT_GMS_SC|GPT_GMS_IEN|GPT_GMS_TMS_DIS, d0
 	move.l	d0, (GMS0,a0)	;disable timer0, set timer0 input mode
 	move.l	d0, (GMS1,a0)	;disable timer1, set timer1 input mode
 	move.l	d0, (GMS2,a0)	;disable timer2, set timer2 input mode
 	move.l	d0, (GMS3,a0)	;disable timer3, set timer3 input mode
 
-	move.l	#(1<<GCIR_PRE_SHIFT), d0
+	move.l	  #(1<<GPT_GCIR_PRE_SHIFT), d0
 	move.l	d0, (GCIR0,a0)	;Set prescaler0 to 1 and zerous counter
 	move.l	d0, (GCIR1,a0)	;Set prescaler1 to 1 and zerous counter
 	move.l	d0, (GCIR2,a0)	;Set prescaler2 to 1 and zerous counter
@@ -826,22 +595,16 @@ _mcf_edge_init:
 
 	rts
 
-;*******************************************************************************
-;* FPU	 								       *
-;*******************************************************************************
-	clr.l	d2
-	fmove.l d2, fpcr
-	rts
-
-;*******************************************************************************
-;* USB 									       *
-;*******************************************************************************
+;********************************************************************************
+;*  USB 									*
+;********************************************************************************
 _mcf_usb_init:
 	move.l	a0, a1
+	add.l	#$b000, a1
 
 	;Perform a hard reset or a USB reset (set USBCR[USBRST])
-;;	bset.l	#USBCR_RST, (USBCR,a1)
-	bset.b	#USBCR_RST, (USBCR,a1)
+	mov3q.l #USBCR_RST, d0
+	move.l	d0, (USBCR,a1)
 
 	;Downloading USB descriptors to the descriptor RAM
 ;	move.l	#(((USB_DESC_LEN&DRAMCR_DSIZE_MASK)<<DRAMCR_DSIZE_SHIFT)|(USB_ADDR&DRAMCR_DADR_MASK), d0
@@ -899,7 +662,7 @@ _mcf_usb_init:
 	;(EPn[OUT/IN]MPSR) for each endpoint that will be used in addition
 	;to the default control endpoint.
 	move.b	#3, d0
-	move.b	d0, (EP1INACR,a0)
+	move.b	    d0, (EP1INACR,a0)
 	move.b	d0, (EP1OUTACR,a0)
 	move.w	d0, (EP1INMPSR,a0)     ;set 0 add transactions, packetsize = 512
 	move.w	d0, (EP1OUTMPSR,a0)    ;set 0 add transactions, packetsize = 512
@@ -917,51 +680,225 @@ _mcf_usb_init:
 	rts
 
 
-	;есть два буфера кадра и два указателя на эти буферы. 
-	;пока в один буфер заливается инфа, другой буфер прога передает по USB. 
-	;потом указатели меняются местами и все повторяется.
-	;d6 - временный регистр
-	;d7 - регистр, сохраняющий прерыдущий статус
+
+
+
+
+;есть два буфера кадра и два указателя на эти буферы. пока в один буфер заливается инфа,
+;другой  буфер прога передает по USB. потом указатели swap'ятся. и все повторяется.
 _main:
-	; начальные настройки полей
-	clr.l	(mode)
-	clr.l	(status)
-	move.l	#free_buffer, d0
-	move.l	d0, (main_bank)
-	addi.l	#FRAME_SIZE, d0
-	move.l	d0, (alter_bank)
+	move.l	#__SRAM0, a6
+	move.l	#__SRAM0+FRM0, a4
+	move.l	#__SRAM0+FRM1, a5
+	move.l	#8, d5
+	move.l	a4, a6
+	move.l	#FRM0+FRM_SIZE*2+CAM_SIZE, d4
+frm_init:
+	move.l	d4, (CAM0,a6)
+	addi.l	#CAM_SIZE, d4
+	subq.l	#1, d5
+	bne.b	frm_init
+frm_rcv:
+	btst.b	#0, (a6)
+	bne.b	frm_rcv
+	bclr.b	#0, (a6)
+	move.l	a4, d4
+	move.l	a5, a4
+	move.l	d4, a5
+	move.l	#300, d4
+	move.l	a5, a3
+	move.l	(USBCR,a0), d4
+	bset.b	#1, d4
+	move.l	d4, (USBCR,a0)
+	move.l	#300, d5
+frm_out:
+	move.b	(a3)+, d6
+	move.b	d6, (DRAMDR,a0)
+	subq.l	#1, d5
+	bne.b	frm_out
+	move.l	(USBCR,a0), d4
+	bclr.b	#1, d4
+	move.l	d4, (USBCR,a0)
+	bra	frm_rcv
+;************************************************************
+exception_handler_src1:
+;button - irq1
+	move.l	#1, d0
+	or.l	d0, (IMRL,a0)
+cycle:
+	eori.l	#111110, d0
+	move.l	d0, a1
+	wddata	$a5
+	move.l	#$ffffffff, d0
+pause:
+	subq.l	#1, d0
+	bne.b	pause
+	bra	cycle
 
-	; цикл ожидания изменения статуса
-	move.l	(status), d7
-.loop:
-	move.l	 (status), d6
-	eor.l	 d7, d6
-	beq.b	.loop
+exception_handler_src2:
+;frame - irq2
+	bclr.b	#2, (IPRL,a0)	;resets irq2
+	btst.b	#1, (a6)	;check active frame
+	bne.b	eofrm		;jump if active frame
+	bset.b	#1, (a6)	;enable active frame
+	clr.w	(2,a6)		;clears row counter
+	bclr.b	#3, (IPRL+3,a0) ;resets irq3
+	bclr.b	#3, (IMRL+3,a0) ;enables irq3
+	bset.b	#3, (EPFR,a0)	;resets irq3 in sevice module
+	rte
+eofrm:
+	bclr.b	#1, (a6)	;disable active frame
+	bset.b	#0, (a6)	;runs procesing of frame
+	bset.b	#3, (IMRL+3,a0) ;disables irq3
+	rte
 
-	; если используется альтернативный буфер, то основной уже заполнен полностью
-;;	btst.l	#BUFFER_ALTERED, (status,a1)
-	btst.b	#BUFFER_ALTERED, (status,a1)
-	beq.b	.load_alter
-	move.l	(main_bank), a2
-	bra.b	.usb_output
-.load_alter:
-	move.l	(alter_bank), a2
-.usb_output:
-	; загружаем количество байт для пересылки по УПШ
-	move.l	#FRAME_SIZE, d2
-	move.l	#USB_FRAME_SIZE, d3
-.usr_packet_output:
-	cmp.l	d3, d2
-;	bge.b	.usr_normal_packet
-;	move.l	d2, d3
-;	cmpi.l	#1, d2
-;	bne.b	.usr_leave_one_byte
-;	bset.b	#EPFCR_WFR, (EP0FCR,a0)
-;	bra.b	.usr_normal_packet
-;.usr_leave_one_byte:
-;	subq.l	#1, d3
-;.usr_normal_packet:
-;	sub.l	d3, d2
-;	bne	.usr_packet_output
-	bra	.loop
+exception_handler_src3:
+;row - irq3
+	bclr.b	#3, (EPFR,a0)	;resets irq3
+	btst.b	#1, (a6)
+	bne.b	eorow
+	bset.b	#1, (a6)
+;	move.l	#%11111111111111111111111111100000, d0
+;	move.b	(EPFR,a0), d1
+;	and.l	d0, d1
+;	move.b	d0, (EPFR,a0)	;resets irq4
+;	and.l	d0, (IPRL,a0)	;resets src4
+;	and.l	d0, (IMRL,a0)	;enables irq4
+;	move.l	#%10000111111111111111111111111111, d0
+;	addq.l	#1, (2,a6)
+;	and.l	d0, (IPRH,a0)	;resets src59-62
+;	and.l	d0, (IMRH,a0)	;enables src59-62
+;	move.l	#%11111111101111111111111111111111, d0
+;	and.l	d0, (IPRH,a0)	;resets src59-62
+;	and.l	d0, (IMRH,a0)	;enables src59-62
+;	move.l	d0, (STCNT0,a0)
+	move.l	#735, d0
+	move.l	d0, (STCNT0,a0) ;load val slice timer 0
+	bset.b	#7, (SCR0,a0) ;run slice timer 0
+	addq.l	#1, (2,a6)
+	rte
+eorow:
+	bclr.b	#1, (a6)
+	move.l	#%10000, d0
+	bset.b	#4, (IMRL+3,a0) ;disables irq4
+	move.l	#%01111000000000000000000000000000, d0
+	or.l	d0, (IMRH,a0)	;disables src59-62
+	rte
+
+exception_handler_src4: ;clk - irq4
+exception_handler_src5:
+exception_handler_src6:
+exception_handler_src7:
+exception_handler_src8:
+exception_handler_src9:
+exception_handler_src10:
+exception_handler_src11:
+exception_handler_src12:
+exception_handler_src13:
+exception_handler_src14:
+exception_handler_src15:
+exception_handler_src16:
+exception_handler_src17:
+exception_handler_src18:
+exception_handler_src19:
+exception_handler_src20:
+exception_handler_src21:
+exception_handler_src22:
+exception_handler_src23:
+exception_handler_src24:
+exception_handler_src25:
+exception_handler_src26:
+exception_handler_src27:
+exception_handler_src28:
+exception_handler_src29:
+exception_handler_src30:
+exception_handler_src31:
+exception_handler_src32:
+exception_handler_src33:
+exception_handler_src34:
+exception_handler_src35:
+exception_handler_src36:
+exception_handler_src37:
+exception_handler_src38:
+exception_handler_src39:
+exception_handler_src40:
+exception_handler_src41:
+exception_handler_src42:
+exception_handler_src43:
+exception_handler_src44:
+exception_handler_src45:
+exception_handler_src46:
+exception_handler_src47:
+exception_handler_src48:
+exception_handler_src49:
+exception_handler_src50:
+exception_handler_src51:
+exception_handler_src52:
+exception_handler_src53:
+exception_handler_src55:
+exception_handler_src56:
+exception_handler_src57:
+exception_handler_src58:
+exception_handler_src63:
+;	move.l	SP,A1
+;	move.l	A1,-(SP)
+;	jsr	exception_handler
+;	lea	4(SP),SP
+	rte
+;пауза "в каждой строке" кадра перед началом заполнением буфера.
+;т.е. т.о. мы "пропускаем" черные пиксели с левой стороны кадра.
+;вместо N надо че-то написать. Паша этого сделать не успел.
+;по-моему должно быть что-то вроде N == 21.
+exception_handler_src54:
+;slice timer 0 - pause N * 106 ns
+	bclr.b	#4, (EPFR,a0)	;resets irq4
+	bclr.b	#4, (IPRL+3,a0) ;resets src4
+	bclr.b	#4, (IMRL+3,a0) ;enables irq4
+;	move.l	#%10000111111111111111111111111111, d0
+	move.l	#%10000111111111111111111111111111, d0
+	and.l	d0, (IPRH,a0)	;resets src59-62
+	and.l	d0, (IMRH,a0)	;enables src59-62
+	rte
+exception_handler_src59:
+;data3 - gpt3
+	bset.b	#0, (IMRL+3,a0)
+	lea.l	(GMS3,a0), a1
+	move.l	(CAM3,a4), a2
+	bra	dataprocessing
+exception_handler_src60:
+;data2 - gpt2
+	bset.b	#0, (IMRL+3,a0)
+	lea.l	(GMS2,a0), a1
+	move.l	(CAM2,a4), a2
+	bra	dataprocessing
+exception_handler_src61:
+;data1 - gpt1
+	bset.b	#0, (IMRL+3,a0)
+	lea.l	(GMS1,a0), a1
+	move.l	(CAM1,a4), a2
+	bra	dataprocessing
+exception_handler_src62:
+;data0 - gpt0
+	bset.b	#0, (IMRL+3,a0) ;disable all ints
+	lea.l	(GMS0,a0), a1
+	move.l	(CAM0,a4), a2
+dataprocessing:
+	move.l	(a6), d0
+	lsl	#2, d0
+	move.l	d0, a2
+	move.l	($c,a1), d1
+	btst.b	#6, (2,a1)
+	beq.b	scnd
+	move.w	d1, (0,a2)
+	bset.b	#7, (2,a1)	;seting fall reaction
+	bclr.b	#6, (2,a1)
+	bra	store
+scnd:
+	move.w	d1, (2,a2)
+	bset.b	#6, (2,a1)	;seting raise reaction
+	bclr.b	#7, (2,a1)
+	bclr.b	#7, (1,a1)	;disable GPT-INT
+store:
+	bclr.b	#0, (IMRL+3,a0) ;enable all ints
+	rte
 
