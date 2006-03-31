@@ -22,16 +22,21 @@ imap <C-PageUp> H
 noremap  gggHG
 vnoremap  "+y
 noremap  
-nnoremap  :update
-vnoremap  :update
-onoremap  :update
+nnoremap  :update
+
+vnoremap  :update
+
+onoremap  :update
+
 nmap  "+gP
 omap  "+gP
 vnoremap  "+x
 noremap  
 noremap  u
-cnoremap   :simalt ~
-inoremap   :simalt ~
+cnoremap   :simalt ~
+
+inoremap   :simalt ~
+
 map Q gq
 nmap <C-PageUp> H
 nmap <C-PageDown> L$
@@ -58,11 +63,13 @@ vmap <C-PageDown> L$
 vmap <C-PageUp> H
 cnoremap  gggHG
 inoremap  gggHG
-inoremap  :update
+inoremap  :update
+
 cmap  +
 inoremap  
 inoremap  u
-noremap   :simalt ~
+noremap   :simalt ~
+
 let &cpo=s:cpo_save
 unlet s:cpo_save
 set background=dark
@@ -85,10 +92,10 @@ let v:this_session=expand("<sfile>:p")
 silent only
 cd ~\Рабочий стол
 set shortmess=aoO
-badd +514 \home\skrylev\Мои\ документы\ippm\projects\ufib\src\core.asm
-badd +0 \home\skrylev\Мои\ документы\ippm\projects\ufib\src\main.asm
+badd +514 \src\core.asm
+badd +0 \src\main.asm
 silent! argdel *
-edit \home\skrylev\Мои\ документы\ippm\projects\ufib\src\main.asm
+edit \src\main.asm
 set splitbelow splitright
 set nosplitbelow
 set nosplitright
