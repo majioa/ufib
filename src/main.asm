@@ -73,17 +73,15 @@
 	xdef exception_handler_src63
 	xref __SRAM0
 
-CAM0	equ	$100
-CAM1	equ	$104
-CAM2	equ	$108
-CAM3	equ	$10c
+CAM0	equ	0
+CAM1	equ	4
+CAM2	equ	8
+CAM3	equ	$c
 SYS_SIZE	equ	4
 FRM_SIZE	equ	$10
 CAM_SIZE	equ	300*4
 FRM0	equ	SYS_SIZE
 FRM1	equ	SYS_SIZE+FRM_SIZE
-
-	section code,16,C
 
 ;есть два буфера кадра и два указателя на эти буферы. пока в один буфер заливается инфа,
 ;другой  буфер прога передает по USB. потом указатели swap'ятся. и все повторяется.
@@ -306,5 +304,6 @@ store:
 
 ;use the boundary command to issue special segment code between the end of code and the start of data. This is used to prevent the look ahead function of the instruction cache obtaining invalid data and a possible lockup.
 
+	boundary
 
 
