@@ -175,6 +175,7 @@ PODR_PSC1PSC0   equ ($a0d)      ;
 PODR_DSPI       equ ($a0e)      ;
 PDDR_FBCTL      equ ($a10)      ;
 PDDR_FBCS       equ ($a11)      ;
+
 PDDR_DMA        equ ($a12)      ;
 PDDR_FEC0H      equ ($a14)      ;
 PDDR_FEC0L      equ ($a15)      ;
@@ -905,20 +906,20 @@ EPPAR_EPPA7_LEVEL	equ	($0000)
 EPPAR_EPPA7_RISE	equ	($4000)
 EPPAR_EPPA7_FALL	equ	($8000)
 EPPAR_EPPA7_BOTH	equ	($c000)
-EPDDR_EPDD1_IN		equ	($00)
-EPDDR_EPDD1_OUT		equ	($02)
-EPDDR_EPDD2_IN		equ	($00)
-EPDDR_EPDD2_OUT		equ	($04)
-EPDDR_EPDD3_IN		equ	($00)
-EPDDR_EPDD3_OUT		equ	($08)
-EPDDR_EPDD4_IN		equ	($00)
-EPDDR_EPDD4_OUT		equ	($10)
-EPDDR_EPDD5_IN		equ	($00)
-EPDDR_EPDD5_OUT		equ	($20)
-EPDDR_EPDD6_IN		equ	($00)
-EPDDR_EPDD6_OUT		equ	($40)
-EPDDR_EPDD7_IN		equ	($00)
-EPDDR_EPDD7_OUT		equ	($80)
+EPDDR_IN1		equ	($00)
+EPDDR_OUT1		equ	($02)
+EPDDR_IN2		equ	($00)
+EPDDR_OUT2		equ	($04)
+EPDDR_IN3		equ	($00)
+EPDDR_OUT3		equ	($08)
+EPDDR_IN4		equ	($00)
+EPDDR_OUT4		equ	($10)
+EPDDR_IN5		equ	($00)
+EPDDR_OUT5		equ	($20)
+EPDDR_IN6		equ	($00)
+EPDDR_OUT6		equ	($40)
+EPDDR_IN7		equ	($00)
+EPDDR_OUT7		equ	($80)
 EPIER_INT1		equ	($02)
 EPIER_INT2		equ	($04)
 EPIER_INT3		equ	($08)
@@ -949,8 +950,26 @@ EPFR_EPF6		equ	($40)
 EPFR_EPF7		equ	($80)
 
 ;* GPIO *
-PAR_TIMER_TOUT3		equ	($08)
 PAR_TIMER_TOUT2		equ	($01)
+PAR_TIMER_TOUT3		equ	($08)
+FPSC1PSC00		equ	($01)
+FPSC1PSC01		equ	($02)
+fPSC1PSC02		equ	($04)
+FPSC1PSC03		equ	($08)
+FPSC1PSC04		equ	($10)
+FPSC1PSC05		equ	($20)
+FPSC1PSC06		equ	($40)
+FPSC1PSC07		equ	($80)
+FPCIBG4			equ	($10)
+FPCIBR4			equ	($10)
+
+
+;* USB *
+DRAMCR_DSIZE_MASK	equ	($00)
+DRAMCR_DSIZE_SHIFT	equ	($00)
+DRAMCR_DADR_MASK	equ	($00)
+USBCR_RST		equ	($00)
+
 
 ;*******************************************************************************
 ;*                                                                             *

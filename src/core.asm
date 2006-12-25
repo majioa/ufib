@@ -23,6 +23,8 @@ __SP_INIT       equ     8*8+__SP_END
 
 SRAM0_SIZE      equ     $0
 
+USB_DESC_LEN	equ	$00
+USB_ADDR	equ	$00
 
         xref    _VECTOR_TABLE
         xdef    start
@@ -111,19 +113,17 @@ _mcf_cache_check:
 	add.l	(SRAM0_SIZE,a2), d0
 	move.l  d0, sp
 
-        jsr     _mcf_gpio_init
-        jsr     _mcf_siu_debug_init
-        jsr     _mcf_siu_ints_init
-        jsr     _mcf_timer_init
-        jsr     _mcf_fb_init
-        jsr     _mcf_edge_init
-        jsr     _mcf_usb_init
+	jsr     _mcf_gpio_init
+	jsr     _mcf_siu_debug_init
+	jsr     _mcf_timer_init
+	jsr     _mcf_fb_init
+	jsr     _mcf_edge_init
+	jsr     _mcf_usb_init
+	jsr     _mcf_siu_ints_init
 
 	;FPU
 	clr.l	d2
 	fmove.l	d2, fpcr
-
-        jsr     _mcf_ipl_init
 
 
         jsr     _main
@@ -258,7 +258,7 @@ _mcf_timer_init:
 	move.l  d0, (GMS2,a0)   ;disable timer2, set timer2 input mode
 	move.l  d0, (GMS3,a0)   ;disable timer3, set timer3 input mode
 
-	move.l	#(1 << GPT_GCIR_PRE_SHIFT), d0
+	move.l	#(1<<GPT_GCIR_PRE_SHIFT), d0
 	move.l  d0, (GCIR0,a0)  ;Set prescaler0 to 1 and zerous counter
 	move.l  d0, (GCIR1,a0)  ;Set prescaler1 to 1 and zerous counter
 	move.l  d0, (GCIR2,a0)  ;Set prescaler2 to 1 and zerous counter
@@ -324,15 +324,16 @@ _mcf_edge_init:
 ;*  USB                                                                         *
 ;********************************************************************************
 _mcf_usb_init:
-	lea.l	(#$b000,a0), a1
+	move.l	a0, a1
+	add.l	#$b000, a1
 
 	;Perform a hard reset or a USB reset (set USBCR[USBRST])
 	mov3q.l	#USBCR_RST, d0
         move.l  d0, (USBCR,a1)
 	
 	;Downloading USB descriptors to the descriptor RAM
-	move.l	#(((USB_DESC_LEN & DRAMCR_DSIZE_MASK) << DRAMCR_DSIZE_SHIFT)| \
-		(USB_ADDR & DRAMCR_DADR_MASK), d0
+;	move.l	#(((USB_DESC_LEN&DRAMCR_DSIZE_MASK)<<DRAMCR_DSIZE_SHIFT)|(USB_ADDR&DRAMCR_DADR_MASK), d0
+	move.l	#(4&6<<4), d0
 	move.l	d0, (DRAMCR,a1)
 	move.l	(DRAMDR,a1), d0
 
@@ -367,9 +368,9 @@ _mcf_usb_init:
 	;Wait for the RSTSTOP interrupt to indicate that reset signalling has 
 	;completed and the device is in the DEFAULT state.
 .wait:
-	move.l	?, d0
-	and.l	#RSTSTOP, d0
-	beq	.wait
+;	move.l	?, d0
+;	and.l	#RSTSTOP, d0
+;	beq	.wait
 
 	;Program the type (EP0ACR) and maximum packet size (EP0MPSR) for 
 	;the default control endpoint.
